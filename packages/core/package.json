@@ -1,6 +1,6 @@
 {
   "name": "@findyourai/toolkit-core",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Zero-dependency TypeScript client for FindYourAI.tools REST APIs",
   "type": "module",
   "main": "./dist/index.cjs",

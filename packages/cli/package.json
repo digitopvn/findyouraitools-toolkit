@@ -1,6 +1,6 @@
 {
   "name": "@findyourai/cli",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Official CLI for FindYourAI.tools: assets, keys, balance, and models",
   "type": "module",
   "bin": {
