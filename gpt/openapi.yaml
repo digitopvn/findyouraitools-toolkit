@@ -1,0 +1,129 @@
+openapi: 3.1.0
+info:
+  title: FindYourAI.tools Actions
+  description: OpenAPI 3.1 Action Specification for ChatGPT Custom GPTs to interact with FindYourAI.tools.
+  version: 1.0.0
+servers:
+  - url: https://findyourai.tools/api/v1
+paths:
+  /profile:
+    get:
+      operationId: getMyProfile
+      summary: Get authenticated user profile
+      responses:
+        '200':
+          description: User profile
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+  /user/balance:
+    get:
+      operationId: getMyBalance
+      summary: Get user credit balances
+      responses:
+        '200':
+          description: User balance
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  balance:
+                    type: object
+                    properties:
+                      credits:
+                        type: number
+                      currency:
+                        type: string
+  /product/find:
+    get:
+      operationId: findProducts
+      summary: Search AI products
+      parameters:
+        - name: query
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Product search results
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      type: object
+  /mcp/by-slug/{slug}:
+    get:
+      operationId: getMcpBySlug
+      summary: Get MCP details by slug
+      parameters:
+        - name: slug
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: MCP details
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+  /ask-ai:
+    post:
+      operationId: askAi
+      summary: Send prompt to AI gateway
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                messages:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      role:
+                        type: string
+                      content:
+                        type: string
+                    required: [role, content]
+              required: [messages]
+      responses:
+        '200':
+          description: AI response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: number
+                  data:
+                    type: object
+components:
+  securitySchemes:
+    apiKey:
+      type: apiKey
+      in: header
+      name: X-API-KEY
+    bearerAuth:
+      type: http
+      scheme: bearer
+security:
+  - apiKey: []
+  - bearerAuth: []

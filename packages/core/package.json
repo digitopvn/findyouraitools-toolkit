@@ -1,0 +1,42 @@
+{
+  "name": "@findyourai/toolkit-core",
+  "version": "0.1.0",
+  "description": "Zero-dependency TypeScript client for FindYourAI.tools REST APIs",
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "require": {
+        "types": "./dist/index.d.cts",
+        "default": "./dist/index.cjs"
+      }
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "keywords": [
+    "findyourai",
+    "ai-tools",
+    "sdk",
+    "mcp",
+    "api-client"
+  ],
+  "author": "Digitop",
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  }
+}

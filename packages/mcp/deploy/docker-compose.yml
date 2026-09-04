@@ -1,0 +1,18 @@
+services:
+  mcp-server:
+    build:
+      context: ../../
+      dockerfile: packages/mcp/deploy/Dockerfile
+    image: findyourai-mcp:local
+    container_name: findyourai-mcp
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - FYAI_API_KEY=${FYAI_API_KEY:-}
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "http://localhost:3000/healthz"]
+      interval: 30s
+      timeout: 5s
+      retries: 3

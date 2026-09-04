@@ -1,0 +1,18 @@
+{
+  "name": "findyourai",
+  "version": "0.1.0",
+  "description": "Official FindYourAI.tools Claude Plugin for managing MCP servers, AI products, API keys, and model gateway",
+  "author": {
+    "name": "Digitop",
+    "url": "https://digitop.vn"
+  },
+  "homepage": "https://findyourai.tools",
+  "icon": "claude/skills/findyourai/icon.svg",
+  "capabilities": {
+    "tools": true
+  },
+  "mcp": {
+    "command": "npx",
+    "args": ["-y", "@findyourai/mcp-server"]
+  }
+}

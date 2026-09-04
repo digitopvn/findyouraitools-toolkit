@@ -1,0 +1,42 @@
+{
+  "name": "@findyourai/cli",
+  "version": "0.1.0",
+  "description": "Official CLI for FindYourAI.tools: assets, keys, balance, and models",
+  "type": "module",
+  "bin": {
+    "fyai": "./dist/bin/fyai.js",
+    "findyourai": "./dist/bin/fyai.js"
+  },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist",
+    "bin"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@findyourai/toolkit-core": "workspace:*",
+    "chalk": "^5.4.1",
+    "cli-table3": "^0.6.5",
+    "commander": "^12.1.0",
+    "dotenv": "^16.4.7",
+    "ora": "^8.1.1"
+  },
+  "keywords": [
+    "findyourai",
+    "cli",
+    "ai-tools",
+    "mcp",
+    "developer-tools"
+  ],
+  "author": "Digitop",
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  }
+}
