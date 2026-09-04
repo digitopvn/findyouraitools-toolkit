@@ -90,16 +90,13 @@ export function registerAuthCommands(program: Command): void {
       try {
         const health = await client.getHealth();
         let keyMasked: string | null = null;
-        let authenticated = false;
 
         if (auth) {
           try {
             const keys = await client.keys.list();
-            authenticated = true;
             const firstKey = keys && keys.length > 0 ? keys[0] : null;
             keyMasked = firstKey ? maskKey(firstKey.prefix, firstKey.last4) : null;
           } catch {
-            authenticated = false;
             keyMasked = null;
           }
         }
