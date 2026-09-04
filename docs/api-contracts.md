@@ -59,14 +59,14 @@ Endpoints where the OpenAPI spec declares an unconstrained object (`{ "type": "o
 
 Tool declarations and schemas are registered programmatically in [`packages/mcp/src/tools/index.ts`](../packages/mcp/src/tools/index.ts).
 
-To inspect the live list of registered tools with their input schemas:
+To inspect the registered tools:
 ```bash
-# Start MCP server and query tools/list via JSON-RPC or use CLI:
-node packages/mcp/dist/bin/mcp-server.js
+grep -oE "name: 'fyai_[a-z_]+'" packages/mcp/src/tools/index.ts | sort -u
 ```
 Or view the agent skill mapping in [`claude/skills/findyourai/SKILL.md`](../claude/skills/findyourai/SKILL.md).
 
 All tools follow `snake_case` naming (`fyai_*`) and validate arguments via Zod before invoking core services.
+
 ---
 
 ## 5. Error Hierarchy & Remediation

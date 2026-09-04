@@ -70,7 +70,7 @@ The toolkit resolves authentication credentials using a 4-step pipeline:
 ### Cloudflare Workers Edge Deployment
 - **Entrypoint**: `packages/mcp/deploy/worker.ts`
 - **Configuration**: `packages/mcp/wrangler.toml` with `nodejs_compat` compatibility flag.
-   - **Characteristics**: Edge fetch handler; zero native Node.js binary bindings.
+- **Characteristics**: Edge fetch handler; zero native Node.js binary bindings.
 
 ### Multi-Stage Alpine Docker Image
 - **Dockerfile**: `packages/mcp/deploy/Dockerfile`
