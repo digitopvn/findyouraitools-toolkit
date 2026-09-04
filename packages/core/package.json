@@ -36,6 +36,11 @@
   ],
   "author": "Digitop",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/digitopvn/findyouraitools-toolkit.git",
+    "directory": "packages/core"
+  },
   "publishConfig": {
     "access": "public"
   }

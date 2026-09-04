@@ -4,6 +4,10 @@
   "private": true,
   "packageManager": "pnpm@11.24.0",
   "description": "Official TypeScript SDK, CLI, MCP Server, and Agent Skills for FindYourAI.tools",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/digitopvn/findyouraitools-toolkit.git"
+  },
   "scripts": {
     "build": "pnpm -r --filter './packages/*' build",
     "test": "vitest run",
