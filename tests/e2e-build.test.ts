@@ -33,6 +33,10 @@ describe('Monorepo Packaging & CI/CD Integrity', () => {
 
     expect(fs.existsSync(ciPath)).toBe(true);
     expect(fs.existsSync(releasePath)).toBe(true);
+    const releaseContent = fs.readFileSync(releasePath, 'utf-8');
+    expect(releaseContent).toContain('id-token: write');
+    expect(releaseContent).toContain('--provenance');
+    expect(releaseContent).not.toContain('secrets.NPM_TOKEN');
 
     const ciContent = fs.readFileSync(ciPath, 'utf-8');
     expect(ciContent).toContain('pnpm install');
