@@ -27,7 +27,7 @@ The codebase is organized as a `pnpm` workspaces monorepo with strict dependency
 1. **`@findyourai/toolkit-core` (`packages/core`)**:
    - **Role**: Pure TypeScript client wrapping the FindYourAI REST API.
    - **Zero Runtime Dependencies**: Relies exclusively on standard web primitives (`fetch`, `Headers`, `Request`, `Response`, `AbortController`).
-   - **Universal Runtime**: Compiles to dual ESM/CJS outputs; runs identically in Node.js 22+, Bun, Cloudflare Workers, and browser contexts.
+   - **Universal Runtime**: Compiles to dual ESM/CJS outputs; targets standard fetch API for Node.js 22+ and Cloudflare Workers.
    - **Resilience**: Configurable exponential backoff retries with jitter for HTTP 429 and 5xx errors.
 
 2. **`@findyourai/cli` (`packages/cli` - `fyai` / `findyourai`)**:
@@ -70,12 +70,12 @@ The toolkit resolves authentication credentials using a 4-step pipeline:
 ### Cloudflare Workers Edge Deployment
 - **Entrypoint**: `packages/mcp/deploy/worker.ts`
 - **Configuration**: `packages/mcp/wrangler.toml` with `nodejs_compat` compatibility flag.
-- **Characteristics**: Global cold starts <50ms; zero native Node.js binary bindings.
+   - **Characteristics**: Edge fetch handler; zero native Node.js binary bindings.
 
-### Multi-Stage Distroless Docker Image
+### Multi-Stage Alpine Docker Image
 - **Dockerfile**: `packages/mcp/deploy/Dockerfile`
 - **Builder**: `node:22-alpine` using `pnpm --filter @findyourai/mcp-server deploy --legacy --prod` to prune development dependencies.
-- **Runner**: Lightweight alpine runner (<150MB total image size).
+- **Runner**: Alpine runner containing only the production pruned bundle (inspect size via `docker images`).
 - **Process**: Runs `node dist/bin/mcp-server.js --http --port 3000`.
 
 ---

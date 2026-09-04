@@ -10,7 +10,7 @@ RUN pnpm --filter @findyourai/toolkit-core build
 RUN pnpm --filter @findyourai/mcp-server build
 RUN pnpm --filter @findyourai/mcp-server deploy --legacy --prod /app/pruned
 
-# Production runner stage (<150MB)
+# Production runner stage
 FROM node:22-alpine AS runner
 WORKDIR /app
 ENV NODE_ENV=production

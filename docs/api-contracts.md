@@ -55,39 +55,18 @@ Endpoints where the OpenAPI spec declares an unconstrained object (`{ "type": "o
 
 ---
 
-## 4. Verified MCP Tool Catalog
+## 4. MCP Tool Catalog
 
-| Tool Name (`snake_case`) | Backend Path | Method | Description |
-|---|---|---|---|
-| `fyai_get_health` | `/healthz` | GET | Probe backend reachability |
-| `fyai_get_my_profile` | `/profile` | GET | Get authenticated user identity |
-| `fyai_get_my_balance` | `/user/balance` | GET | Get user credit balances (`balance` envelope) |
-| `fyai_list_my_transactions` | `/user-balance/cash-transaction` | GET | List cash transaction history |
-| `fyai_list_api_keys` | `/api-keys` | GET | List user API keys |
-| `fyai_create_api_key` | `/api-key` | POST | Generate a new API key (returns `rawKey`) |
-| `fyai_rotate_api_key` | `/api-key/{id}/regenerate` | POST | Regenerate an existing key |
-| `fyai_revoke_api_key` | `/api-key/{id}` | DELETE | Revoke an API key |
-| `fyai_list_my_mcps` | `/mcp` | GET | List user MCP directory entries |
-| `fyai_get_mcp` | `/mcp/by-slug/{slug}` | GET | Get MCP specification by slug |
-| `fyai_create_mcp` | `/mcp` | POST | Register an MCP server |
-| `fyai_update_mcp` | `/mcp/{id}` | PUT | Update MCP server parameters |
-| `fyai_delete_mcp` | `/mcp/{id}` | DELETE | Remove an MCP server |
-| `fyai_list_my_products` | `/product` | GET | List user AI products |
-| `fyai_find_products` | `/product/find` | GET | Search AI products by keyword |
-| `fyai_get_product` | `/product/by-slug/{slug}` | GET | Get product details by slug |
-| `fyai_create_product` | `/product` | POST | Register a new AI product |
-| `fyai_update_product` | `/product/{id}` | PATCH | Update AI product metadata |
-| `fyai_delete_product` | `/product/{id}` | DELETE | Remove an AI product |
-| `fyai_create_blog_post` | `/blog/posts` | POST | Publish a community article |
-| `fyai_ask_ai` | `/ask-ai` | POST | Query the AI model gateway |
-| `fyai_list_ai_models` | `/ask-ai/models` | GET | List available gateway models |
-| `fyai_admin_list_all_keys` | `/admin/api-keys` | GET | Admin: list all platform keys |
-| `fyai_admin_get_key_stats` | `/admin/api-keys/stats` | GET | Admin: get API key usage metrics |
-| `fyai_admin_issue_key` | `/admin/api-key` | POST | Admin: issue key to user |
-| `fyai_admin_revoke_key` | `/admin/api-key/{id}` | DELETE | Admin: revoke any key |
-| `fyai_admin_search_users` | `/search/user` | GET | Admin: search users by query |
-| `fyai_admin_get_user` | `/user/{id}` | GET | Admin: get user details |
+Tool declarations and schemas are registered programmatically in [`packages/mcp/src/tools/index.ts`](../packages/mcp/src/tools/index.ts).
 
+To inspect the live list of registered tools with their input schemas:
+```bash
+# Start MCP server and query tools/list via JSON-RPC or use CLI:
+node packages/mcp/dist/bin/mcp-server.js
+```
+Or view the agent skill mapping in [`claude/skills/findyourai/SKILL.md`](../claude/skills/findyourai/SKILL.md).
+
+All tools follow `snake_case` naming (`fyai_*`) and validate arguments via Zod before invoking core services.
 ---
 
 ## 5. Error Hierarchy & Remediation

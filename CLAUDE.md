@@ -6,7 +6,6 @@ Refer to [`AGENTS.md`](./AGENTS.md) for the authoritative rules, mandatory tooli
 ## Quick Reference
 - **Pre-flight Gate**: `pnpm build && pnpm typecheck && pnpm test`
 - **Single Test**: `pnpm vitest run <path/to/test.ts>`
-- **Core Coverage**: `pnpm vitest run --coverage packages/core`
-- **Spec Ground Truth**: `plans/.../reports/openapi.json` (78 paths, base `https://findyourai.tools/api/v1`)
+- **Spec Ground Truth**: `plans/260904-1122-bootstrap-findyourai-toolkit/reports/openapi.json` (base `https://findyourai.tools/api/v1`)
 - **Key Envelope Rule**: `GET /user/balance` returns `{ balance: ... }` (not `{ data: ... }`)
 - **Auth**: `X-API-KEY` or `Authorization: Bearer` (no OAuth2)

@@ -18,7 +18,7 @@ This file contains imperative rules governing developer and autonomous AI agent 
 - **Typecheck**: `pnpm typecheck` (runs root `tsc --noEmit` and all workspace packages).
 - **Run Full Test Suite**: `pnpm test` (runs Vitest in run mode).
 - **Run Single Test File**: `pnpm vitest run <path/to/test.ts>` (e.g. `pnpm vitest run packages/core/tests/client.test.ts`).
-- **Measure Code Coverage**: `pnpm vitest run --coverage packages/core` (verifies $\ge 85\%$ statement coverage).
+- **Measure Code Coverage**: `pnpm vitest run --coverage packages/core`
 - **Definition of Done (Pre-flight Gate)**:
   ```bash
   pnpm build && pnpm typecheck && pnpm test
@@ -36,7 +36,7 @@ This file contains imperative rules governing developer and autonomous AI agent 
 
 ## 4. API Contract Invariants & Non-Negotiables
 
-- **Authoritative Spec**: The vendored OpenAPI 3.0.3 specification (`plans/.../reports/openapi.json`, 78 paths, base `https://findyourai.tools/api/v1`) is the ground truth.
+- **Authoritative Spec**: The vendored OpenAPI 3.0.3 specification (`plans/260904-1122-bootstrap-findyourai-toolkit/reports/openapi.json`, base `https://findyourai.tools/api/v1`) is the ground truth.
 - **Supported Authentication**:
   - `apiKey`: Header `X-API-KEY`
   - `bearerAuth`: Header `Authorization: Bearer <token>`
@@ -56,7 +56,7 @@ This file contains imperative rules governing developer and autonomous AI agent 
 
 ### CLI (`packages/cli` - `fyai`)
 - **JSON Output Contract**: When `--json` is supplied, stdout must contain **strictly parseable JSON**. Suppress all spinners (`ora`), ANSI formatting (`chalk`), and banner text.
-- **Exit Codes**: Use constants from `src/utils/exit-codes.ts` (`SUCCESS: 0`, `GENERAL_ERROR: 1`, `INVALID_ARGUMENTS: 2`, `AUTH_FAILURE: 3`, `RATE_LIMITED: 4`).
+- **Exit Codes**: Use constants from `src/utils/exit-codes.ts` (`ExitCode`). Never hardcode numeric exit values.
 - **Credential Storage**: Credentials saved in `~/.fyai/config.json` (or `FYAI_CONFIG_DIR`) must use strict `0600` file permissions.
 - **Key Masking**: Use server-provided `prefix` and `last4` (`maskKey(prefix, last4)`). Never slice raw secret strings (`auth.slice(-4)` is banned).
 
