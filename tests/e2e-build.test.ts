@@ -41,6 +41,6 @@ describe('Monorepo Packaging & CI/CD Integrity', () => {
     const ciContent = fs.readFileSync(ciPath, 'utf-8');
     expect(ciContent).toContain('pnpm install');
     expect(ciContent).toContain('pnpm test');
-    expect(ciContent).toContain('node-version: [18.x, 20.x, 22.x]');
+    expect(ciContent).toContain('node-version: [22.x, 24.x]');
   });
 });
