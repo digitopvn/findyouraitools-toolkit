@@ -94,12 +94,13 @@ describe('Service Layer & Envelopes Full Coverage', () => {
     expect(mockFetch).toHaveBeenCalledTimes(2);
   });
 
-  it('AdminService: exercises listKeys, getKeyStats, issueKey, revokeKey, searchUsers', async () => {
+  it('AdminService: exercises listKeys, getKeyStats, issueKey, revokeKey, searchUsers, getUser', async () => {
     await client.admin.listKeys();
     await client.admin.getKeyStats();
     await client.admin.issueKey('u-1', 'Admin Key');
     await client.admin.revokeKey('k-1');
     await client.admin.searchUsers('test');
-    expect(mockFetch).toHaveBeenCalledTimes(5);
+    await client.admin.getUser('u-1');
+    expect(mockFetch).toHaveBeenCalledTimes(6);
   });
 });

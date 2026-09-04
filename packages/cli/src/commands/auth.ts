@@ -3,7 +3,7 @@ import chalk from 'chalk';
 import { ConfigStore } from '../auth/config-store';
 import { createClient } from '../utils/client-factory';
 import { formatOutput } from '../ui/formatters';
-import { maskSecret } from '../ui/sanitize';
+import { maskKey } from '../ui/sanitize';
 import { ExitCode } from '../utils/exit-codes';
 
 export function registerAuthCommands(program: Command): void {
@@ -90,25 +90,27 @@ export function registerAuthCommands(program: Command): void {
       try {
         const health = await client.getHealth();
         let keyMasked: string | null = null;
-        let authValid = false;
+        let authenticated = false;
 
         if (auth) {
           try {
-            await client.user.getProfile();
-            authValid = true;
-            keyMasked = maskSecret(auth);
+            const keys = await client.keys.list();
+            authenticated = true;
+            const firstKey = keys && keys.length > 0 ? keys[0] : null;
+            keyMasked = maskKey(firstKey?.prefix, firstKey?.last4 || auth.slice(-4));
           } catch {
-            authValid = false;
-            keyMasked = maskSecret(auth);
+            authenticated = false;
+            keyMasked = null;
           }
         }
 
         const result = {
-          status: health.status === 1 || health.status === 200 ? 'ok' : health.status,
-          health,
+          status: health.status,
+          apiReachable: true,
+          authenticated,
           auth: {
             configured: Boolean(auth),
-            valid: authValid,
+            authenticated,
             keyMasked,
           },
         };

@@ -20,7 +20,13 @@ export function registerAiCommands(program: Command): void {
         if (isJson) {
           console.log(formatOutput(response, { isJson }));
         } else {
-          console.log(response.data?.text || JSON.stringify(response.data));
+          const text =
+            response.data && typeof response.data['text'] === 'string'
+              ? response.data['text']
+              : response.data && typeof response.data['content'] === 'string'
+                ? response.data['content']
+                : JSON.stringify(response.data ?? response, null, 2);
+          console.log(text);
         }
       } catch (err: unknown) {
         console.error(chalk.red(`Error: ${err instanceof Error ? err.message : String(err)}`));

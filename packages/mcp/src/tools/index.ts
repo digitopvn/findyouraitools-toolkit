@@ -401,44 +401,64 @@ export function registerAllTools(server: Server, options: RegisterToolsOptions):
           break;
         }
         case 'fyai_update_mcp': {
-          const id = String(args?.['id'] || '');
-          result = await client.mcp.update(id, args as { name?: string });
+          const parsed = z
+            .object({
+              id: z.string().min(1),
+              name: z.string().optional(),
+              description: z.string().optional(),
+              category: z.string().optional(),
+            })
+            .parse(args);
+          const { id, ...data } = parsed;
+          result = await client.mcp.update(id, data);
           break;
         }
         case 'fyai_delete_mcp': {
-          const id = String(args?.['id'] || '');
-          result = await client.mcp.deleteById(id);
+          const parsed = z.object({ id: z.string().min(1) }).parse(args);
+          result = await client.mcp.deleteById(parsed.id);
           break;
         }
         case 'fyai_update_product': {
-          const id = String(args?.['id'] || '');
-          result = await client.product.update(id, args as { name?: string });
+          const parsed = z
+            .object({
+              id: z.string().min(1),
+              name: z.string().optional(),
+              tagline: z.string().optional(),
+              description: z.string().optional(),
+            })
+            .parse(args);
+          const { id, ...data } = parsed;
+          result = await client.product.update(id, data);
           break;
         }
         case 'fyai_delete_product': {
-          const id = String(args?.['id'] || '');
-          result = await client.product.deleteById(id);
+          const parsed = z.object({ id: z.string().min(1) }).parse(args);
+          result = await client.product.deleteById(parsed.id);
           break;
         }
         case 'fyai_admin_issue_key': {
-          const userId = String(args?.['userId'] || '');
-          const keyName = String(args?.['name'] || 'admin-key');
-          result = await client.admin.issueKey(userId, keyName);
+          const parsed = z
+            .object({
+              userId: z.string().min(1),
+              name: z.string().min(1),
+            })
+            .parse(args);
+          result = await client.admin.issueKey(parsed.userId, parsed.name);
           break;
         }
         case 'fyai_admin_revoke_key': {
-          const id = String(args?.['id'] || '');
-          result = await client.admin.revokeKey(id);
+          const parsed = z.object({ id: z.string().min(1) }).parse(args);
+          result = await client.admin.revokeKey(parsed.id);
           break;
         }
         case 'fyai_admin_search_users': {
-          const query = String(args?.['query'] || '');
-          result = await client.admin.searchUsers(query);
+          const parsed = z.object({ query: z.string().min(1) }).parse(args);
+          result = await client.admin.searchUsers(parsed.query);
           break;
         }
         case 'fyai_admin_get_user': {
-          const id = String(args?.['id'] || '');
-          result = await client.request(`/user/${encodeURIComponent(id)}`);
+          const parsed = z.object({ id: z.string().min(1) }).parse(args);
+          result = await client.admin.getUser(parsed.id);
           break;
         }
         default:
