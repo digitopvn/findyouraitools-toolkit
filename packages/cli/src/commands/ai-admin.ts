@@ -19,14 +19,10 @@ export function registerAiCommands(program: Command): void {
         });
         if (isJson) {
           console.log(formatOutput(response, { isJson }));
+        } else if (response.messages && response.messages.length > 0) {
+          console.log(response.messages.join('\n'));
         } else {
-          const text =
-            response.data && typeof response.data['text'] === 'string'
-              ? response.data['text']
-              : response.data && typeof response.data['content'] === 'string'
-                ? response.data['content']
-                : JSON.stringify(response.data ?? response, null, 2);
-          console.log(text);
+          console.log(formatOutput(response.data ?? response, { isJson: false }));
         }
       } catch (err: unknown) {
         console.error(chalk.red(`Error: ${err instanceof Error ? err.message : String(err)}`));

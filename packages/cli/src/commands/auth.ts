@@ -97,7 +97,7 @@ export function registerAuthCommands(program: Command): void {
             const keys = await client.keys.list();
             authenticated = true;
             const firstKey = keys && keys.length > 0 ? keys[0] : null;
-            keyMasked = maskKey(firstKey?.prefix, firstKey?.last4 || auth.slice(-4));
+            keyMasked = firstKey ? maskKey(firstKey.prefix, firstKey.last4) : null;
           } catch {
             authenticated = false;
             keyMasked = null;
@@ -106,11 +106,8 @@ export function registerAuthCommands(program: Command): void {
 
         const result = {
           status: health.status,
-          apiReachable: true,
-          authenticated,
           auth: {
             configured: Boolean(auth),
-            authenticated,
             keyMasked,
           },
         };
@@ -118,8 +115,11 @@ export function registerAuthCommands(program: Command): void {
       } catch (err: unknown) {
         const msg = err instanceof Error ? err.message : String(err);
         const result = {
-          status: 'error',
-          apiReachable: false,
+          status: 0,
+          auth: {
+            configured: Boolean(auth),
+            keyMasked: null,
+          },
           error: msg,
         };
         console.log(formatOutput(result, { isJson }));

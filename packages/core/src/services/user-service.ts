@@ -8,7 +8,7 @@ export class UserService extends BaseService {
   }
 
   async getBalance(): Promise<UserBalance> {
-    // Note: /user/balance responds with { balance: { credits, currency, ... } }
+    // Note: /user/balance responds with { balance: ... } envelope
     const res = await this.get<{ balance: UserBalance }>('/user/balance');
     return res.balance;
   }

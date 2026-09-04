@@ -25,8 +25,8 @@ describe('MCP Tool Execution', () => {
     ]);
   });
 
-  it('executes fyai_get_health successfully', async () => {
-    vi.spyOn(mockCoreClient, 'getHealth').mockResolvedValue({ status: 'ok' });
+  it('executes fyai_get_health successfully with numeric status', async () => {
+    vi.spyOn(mockCoreClient, 'getHealth').mockResolvedValue({ status: 1 });
 
     const res = await client.callTool({ name: 'fyai_get_health', arguments: {} });
     expect(res.isError).toBeFalsy();
@@ -34,21 +34,19 @@ describe('MCP Tool Execution', () => {
     expect(res.content[0]?.type).toBe('text');
 
     const body = JSON.parse((res.content[0] as { text: string }).text);
-    expect(body).toEqual({ status: 'ok' });
+    expect(body).toEqual({ status: 1 });
   });
 
   it('executes fyai_get_my_balance successfully extracting balance envelope', async () => {
     vi.spyOn(mockCoreClient.user, 'getBalance').mockResolvedValue({
-      credits: 1000,
-      currency: 'USD',
+      rawBalance: 1000,
     });
 
     const res = await client.callTool({ name: 'fyai_get_my_balance', arguments: {} });
     expect(res.isError).toBeFalsy();
 
     const body = JSON.parse((res.content[0] as { text: string }).text);
-    expect(body.credits).toBe(1000);
-    expect(body.currency).toBe('USD');
+    expect(body.rawBalance).toBe(1000);
   });
 
   it('executes fyai_create_api_key passing parameters', async () => {
