@@ -7,16 +7,39 @@ import { Client } from '@modelcontextprotocol/sdk/client/index.js';
 export function createHttpApp(): Hono {
   const app = new Hono();
 
+  // Health probe
   app.get('/healthz', (c) => {
-    return c.json({ status: 'ok', service: 'findyourai-mcp-http' });
+    return c.json({ status: 1, service: 'findyourai-mcp-http' });
   });
 
+  // Streamable HTTP SSE endpoint
+  app.get('/mcp', () => {
+    return new Response('event: endpoint\ndata: /mcp\n\n', {
+      headers: {
+        'Content-Type': 'text/event-stream',
+        'Cache-Control': 'no-cache',
+        Connection: 'keep-alive',
+      },
+    });
+  });
+
+  // JSON-RPC endpoint
   app.post('/mcp', async (c) => {
     const authHeader = c.req.header('Authorization');
     const apiKeyHeader = c.req.header('X-API-KEY');
 
     if (!authHeader && !apiKeyHeader) {
-      return c.json({ error: 'Unauthorized: missing Authorization or X-API-KEY header' }, 401);
+      return c.json(
+        {
+          jsonrpc: '2.0',
+          id: null,
+          error: {
+            code: -32001,
+            message: 'Unauthorized: missing Authorization or X-API-KEY header',
+          },
+        },
+        401
+      );
     }
 
     const token = authHeader?.startsWith('Bearer ') ? authHeader.slice(7) : undefined;
@@ -24,6 +47,23 @@ export function createHttpApp(): Hono {
       apiKey: apiKeyHeader,
       bearerToken: token,
     });
+
+    // Validate credentials against /profile
+    try {
+      await coreClient.user.getProfile();
+    } catch {
+      return c.json(
+        {
+          jsonrpc: '2.0',
+          id: null,
+          error: {
+            code: -32001,
+            message: 'Unauthorized: credentials rejected by FindYourAI /profile',
+          },
+        },
+        401
+      );
+    }
 
     let body: { jsonrpc?: string; id?: unknown; method?: string; params?: Record<string, unknown> };
     try {
@@ -50,6 +90,7 @@ export function createHttpApp(): Hono {
           },
         });
       }
+
       if (body.method === 'tools/list') {
         const list = await client.listTools();
         return c.json({ jsonrpc: '2.0', id: body.id ?? null, result: list });

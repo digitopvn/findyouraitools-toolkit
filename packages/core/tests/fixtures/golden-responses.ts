@@ -1,6 +1,6 @@
 export const GOLDEN_RESPONSES = {
   health: {
-    status: 'ok',
+    status: 1,
   },
   apiKeyCreate: {
     data: {

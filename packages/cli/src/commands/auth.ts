@@ -3,6 +3,7 @@ import chalk from 'chalk';
 import { ConfigStore } from '../auth/config-store';
 import { createClient } from '../utils/client-factory';
 import { formatOutput } from '../ui/formatters';
+import { maskSecret } from '../ui/sanitize';
 import { ExitCode } from '../utils/exit-codes';
 
 export function registerAuthCommands(program: Command): void {
@@ -28,7 +29,11 @@ export function registerAuthCommands(program: Command): void {
         if (isJson) {
           console.log(formatOutput({ success: true, user: profile }, { isJson }));
         } else {
-          console.log(chalk.green(`✓ Successfully authenticated as ${profile.name || profile.id}`));
+          const identifier =
+            (typeof profile['name'] === 'string' && profile['name']) ||
+            (typeof profile['id'] === 'string' && profile['id']) ||
+            'User';
+          console.log(chalk.green(`✓ Successfully authenticated as ${identifier}`));
         }
       } catch (err: unknown) {
         const msg = err instanceof Error ? err.message : String(err);
@@ -84,11 +89,28 @@ export function registerAuthCommands(program: Command): void {
       const auth = client.apiKey;
       try {
         const health = await client.getHealth();
+        let keyMasked: string | null = null;
+        let authValid = false;
+
+        if (auth) {
+          try {
+            await client.user.getProfile();
+            authValid = true;
+            keyMasked = maskSecret(auth);
+          } catch {
+            authValid = false;
+            keyMasked = maskSecret(auth);
+          }
+        }
+
         const result = {
-          status: health.status,
-          apiReachable: true,
-          authenticated: Boolean(auth),
-          authSource: auth ? 'configured' : 'none',
+          status: health.status === 1 || health.status === 200 ? 'ok' : health.status,
+          health,
+          auth: {
+            configured: Boolean(auth),
+            valid: authValid,
+            keyMasked,
+          },
         };
         console.log(formatOutput(result, { isJson }));
       } catch (err: unknown) {

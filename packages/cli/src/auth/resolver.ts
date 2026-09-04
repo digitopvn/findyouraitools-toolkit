@@ -16,11 +16,12 @@ export function resolveCredentials(options: ResolveOptions = {}): ResolvedAuth {
     return { apiKey: options.apiKey, source: 'flag' };
   }
 
-  // 2. Load .env if present
+  // 2. Load .env.local and .env if present
   try {
-    dotenv.config();
+    dotenv.config({ path: '.env.local' });
+    dotenv.config({ path: '.env' });
   } catch {
-    // Ignore error loading .env
+    // Ignore error loading .env files
   }
 
   // 3. Environment variables

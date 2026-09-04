@@ -5,7 +5,8 @@ import {
   ErrorCode,
   McpError,
 } from '@modelcontextprotocol/sdk/types.js';
-import { FindYourAiClient } from '@findyourai/toolkit-core';
+import { FindYourAiClient, FindYourAiError } from '@findyourai/toolkit-core';
+import { z } from 'zod';
 
 export interface RegisterToolsOptions {
   coreClient: FindYourAiClient;
@@ -310,18 +311,18 @@ export function registerAllTools(server: Server, options: RegisterToolsOptions):
           break;
         }
         case 'fyai_create_api_key': {
-          const keyName = String(args?.['name'] || 'agent-key');
-          result = await client.keys.create({ name: keyName });
+          const parsed = z.object({ name: z.string().min(1).max(100) }).parse(args);
+          result = await client.keys.create({ name: parsed.name });
           break;
         }
         case 'fyai_rotate_api_key': {
-          const id = String(args?.['id'] || '');
-          result = await client.keys.rotate(id);
+          const parsed = z.object({ id: z.string().min(1) }).parse(args);
+          result = await client.keys.rotate(parsed.id);
           break;
         }
         case 'fyai_revoke_api_key': {
-          const id = String(args?.['id'] || '');
-          result = await client.keys.deleteById(id);
+          const parsed = z.object({ id: z.string().min(1) }).parse(args);
+          result = await client.keys.deleteById(parsed.id);
           break;
         }
         case 'fyai_list_my_mcps': {
@@ -329,12 +330,19 @@ export function registerAllTools(server: Server, options: RegisterToolsOptions):
           break;
         }
         case 'fyai_get_mcp': {
-          const slug = String(args?.['slug'] || '');
-          result = await client.mcp.getBySlug(slug);
+          const parsed = z.object({ slug: z.string().min(1) }).parse(args);
+          result = await client.mcp.getBySlug(parsed.slug);
           break;
         }
         case 'fyai_create_mcp': {
-          result = await client.mcp.create(args as { name: string });
+          const parsed = z
+            .object({
+              name: z.string().min(1),
+              description: z.string().optional(),
+              category: z.string().optional(),
+            })
+            .parse(args);
+          result = await client.mcp.create(parsed);
           break;
         }
         case 'fyai_list_my_products': {
@@ -342,31 +350,41 @@ export function registerAllTools(server: Server, options: RegisterToolsOptions):
           break;
         }
         case 'fyai_find_products': {
-          const query = String(args?.['query'] || '');
-          result = await client.product.find({ query });
+          const parsed = z.object({ query: z.string().min(1) }).parse(args);
+          result = await client.product.find({ query: parsed.query });
           break;
         }
         case 'fyai_get_product': {
-          const slug = String(args?.['slug'] || '');
-          result = await client.product.getBySlug(slug);
+          const parsed = z.object({ slug: z.string().min(1) }).parse(args);
+          result = await client.product.getBySlug(parsed.slug);
           break;
         }
         case 'fyai_create_product': {
-          result = await client.product.create(args as { name: string });
+          const parsed = z
+            .object({
+              name: z.string().min(1),
+              tagline: z.string().optional(),
+              description: z.string().optional(),
+            })
+            .parse(args);
+          result = await client.product.create(parsed);
           break;
         }
         case 'fyai_create_blog_post': {
-          const title = String(args?.['title'] || '');
-          const content = String(args?.['content'] || '');
-          result = await client.blog.create({ title, content });
+          const parsed = z.object({ title: z.string().min(1), content: z.string().min(1) }).parse(args);
+          result = await client.blog.create(parsed);
           break;
         }
         case 'fyai_ask_ai': {
-          const prompt = String(args?.['prompt'] || '');
-          const model = typeof args?.['model'] === 'string' ? args['model'] : undefined;
+          const parsed = z
+            .object({
+              prompt: z.string().min(1),
+              model: z.string().optional(),
+            })
+            .parse(args);
           result = await client.ai.ask({
-            model,
-            messages: [{ role: 'user', content: prompt }],
+            model: parsed.model,
+            messages: [{ role: 'user', content: parsed.prompt }],
           });
           break;
         }
@@ -436,13 +454,48 @@ export function registerAllTools(server: Server, options: RegisterToolsOptions):
         ],
       };
     } catch (err: unknown) {
-      const errorMessage = err instanceof Error ? err.message : String(err);
+      if (err instanceof z.ZodError) {
+        return {
+          isError: true,
+          content: [
+            {
+              type: 'text',
+              text: JSON.stringify(
+                {
+                  error: true,
+                  code: 'VALIDATION_ERROR',
+                  message: err.errors.map((e) => `${e.path.join('.')}: ${e.message}`).join('; '),
+                  remediation: 'Please check tool parameters against the declared inputSchema.',
+                },
+                null,
+                2
+              ),
+            },
+          ],
+        };
+      }
+
+      const code = err instanceof FindYourAiError ? err.code : 'TOOL_EXECUTION_ERROR';
+      const remediation =
+        err instanceof FindYourAiError
+          ? err.remediation
+          : 'Check that credentials are valid and network endpoint is accessible.';
+
       return {
         isError: true,
         content: [
           {
             type: 'text',
-            text: JSON.stringify({ error: true, message: errorMessage }, null, 2),
+            text: JSON.stringify(
+              {
+                error: true,
+                code,
+                message: err instanceof Error ? err.message : String(err),
+                remediation,
+              },
+              null,
+              2
+            ),
           },
         ],
       };

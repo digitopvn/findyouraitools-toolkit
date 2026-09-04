@@ -77,7 +77,7 @@ describe('FindYourAiClient Core', () => {
     });
 
     const health = await client.getHealth();
-    expect(health).toEqual({ status: 'ok' });
+    expect(health).toEqual({ status: 1 });
     expect(mockFetch).toHaveBeenCalledTimes(3);
   });
 

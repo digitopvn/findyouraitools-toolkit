@@ -14,11 +14,7 @@ export interface AskAiRequest {
 
 export interface AskAiResponse {
   status: number;
-  data: {
-    text?: string;
-    model?: string;
-    [key: string]: unknown;
-  };
+  data?: Record<string, unknown>;
   messages?: string[];
 }
 
