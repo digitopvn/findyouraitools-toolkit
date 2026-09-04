@@ -4,7 +4,6 @@ WORKDIR /app
 RUN corepack enable
 COPY pnpm-lock.yaml pnpm-workspace.yaml package.json tsconfig.base.json ./
 COPY packages/core ./packages/core
-COPY packages/cli ./packages/cli
 COPY packages/mcp ./packages/mcp
 RUN pnpm install --frozen-lockfile
 RUN pnpm --filter @findyourai/toolkit-core build
